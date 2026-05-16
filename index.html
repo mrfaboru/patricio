@@ -613,7 +613,6 @@
 
   <!-- MENSAJE FINAL -->
   <div id="scene-11" class="scene" id="scene-message" style="--accent:#c8860a; background:#0d0903;">
-    <span class="msg-cross">&#10013;</span>
     <p class="msg-label">Con todo nuestro amor</p>
     <h2 class="msg-title">Papá, hoy es tu día</h2>
     <div class="divider">
@@ -705,17 +704,23 @@
     }
   }
 
-  // Autoplay al primer toque en la pantalla
-  function tryAutoplay() {
+  // Intentar autoplay inmediato al cargar
+  window.addEventListener('load', function() {
     audio.play().then(function(){
       playing = true;
       updateMusicUI();
-      document.removeEventListener('touchstart', tryAutoplay);
-      document.removeEventListener('click', tryAutoplay);
-    }).catch(function(){});
-  }
-  document.addEventListener('touchstart', tryAutoplay, {once: true});
-  document.addEventListener('click', tryAutoplay, {once: true});
+    }).catch(function(){
+      // Si el navegador bloquea, esperar primer toque
+      function tryAutoplay() {
+        audio.play().then(function(){
+          playing = true;
+          updateMusicUI();
+        }).catch(function(){});
+      }
+      document.addEventListener('touchstart', tryAutoplay, {once: true});
+      document.addEventListener('click', tryAutoplay, {once: true});
+    });
+  });
 
   // Estrellas canvas
   var canvas = document.getElementById('stars-canvas');
